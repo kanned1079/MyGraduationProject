@@ -1,0 +1,20 @@
+#!/bin/bash
+cpu_us=`top -bn 1 | grep 'Cpu(s)' | awk -F'[" "%]+' '{print $3}'`
+cpu_sy=`top -bn 1 | grep 'Cpu(s)' | awk -F'[" "%]+' '{print $5}'`
+diskall=`df -h | awk '$6=="/"{sub("G","",$5);print $2}'`
+diskused=`df -h | awk '$6=="/"{sub("G","",$5);print $3}'`
+mem_sys_used=`free | grep Mem | awk '{print $3}'`
+cpu_sum=$(echo "$cpu_us+$cpu_sy"|bc)
+mem_sum=$((mem_sys_used/1024))
+result=$cpu_sum
+result2=$mem_sum
+resdiskall=${diskall%?}
+resdiskuesd=${diskused%?}
+mosquitto_pub -d -q 1 -h "192.168.0.243" -t "v1/devices/me/telemetry" -u "TEST_TOKEN" -m "{"cpuLoad":$result,"memLoad":$result2}"
+mosquitto_pub -d -q 1 -h "192.168.0.243" -t "v1/devices/me/telemetry" -u "TEST_TOKEN" -m "{"diskall":$resdiskall}"
+mosquitto_pub -d -q 1 -h "192.168.0.243" -t "v1/devices/me/telemetry" -u "TEST_TOKEN" -m "{"diskused":$resdiskuesd}"
+
+
+mosquitto_pub -d -q 1 -h "192.168.0.243" -t "v1/devices/me/telemetry" -u "TEST_TOKEN" -m "{"latitude":31.76113334198144,"longitude":119.9486516854553}"
+
+mosquitto_pub -t "ss" -p 1884 -m   "$result   $result2" -h "192.168.0.243"
