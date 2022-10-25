@@ -27,6 +27,7 @@ float Temperature;
 float Humidity;
 float Temp_Fahrenheit;
 String HumidifierStatus;
+int num = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -70,11 +71,17 @@ void loop()
   Temperature = dht.readTemperature(); //将温度读取为摄氏度
   Temp_Fahrenheit= dht.readTemperature(true); //将温度读取为华氏度
 
-  if(Humidity < 45)
+  if(Humidity < 45 && num ==0)
+  {
+    num += 201;
+  }
+
+  if(num != 0)
   {
     digitalWrite(LED_BUILTIN, LOW); //低电平为打开板载LED
     digitalWrite(D3, HIGH); //湿度低于45打开加湿器
     HumidifierStatus = "工作中";
+    num--;
   }
   else
   {
@@ -126,6 +133,10 @@ void loop()
   display.setTextSize(1);
   display.setCursor(0, 35);
   display.print("Humidity: ");
+
+  display.setTextSize(1);
+  display.setCursor(100, 35);
+  display.print(num);
 
   display.setTextSize(2);
   display.setCursor(0, 45);
