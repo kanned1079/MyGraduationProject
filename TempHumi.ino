@@ -27,7 +27,9 @@ float Temperature;
 float Humidity;
 float Temp_Fahrenheit;
 String HumidifierStatus;
+String AirconStatus;
 int num = 0;
+int num1 = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -36,6 +38,8 @@ void setup() {
   digitalWrite(LED_BUILTIN, HIGH); //开机关闭LED
   pinMode(D3, OUTPUT); //将板载D3接口作为输出口，用于继电器连接
   digitalWrite(D3, LOW); //开机关闭继电器
+  pinMode(D4, OUTPUT); //将板载D3接口作为输出口，用于继电器连接
+  digitalWrite(D4, LOW); //开机关闭继电器
   pinMode(DHTPin, INPUT); //将连接DHT11的数据口作为输入口
 
   dht.begin();
@@ -76,19 +80,40 @@ void loop()
     num += 201;
   }
 
+    if(Temperature > 29 && num1 ==0)
+  {
+    num1 += 600;
+  }
+
   if(num != 0)
   {
     digitalWrite(LED_BUILTIN, LOW); //低电平为打开板载LED
-    digitalWrite(D3, HIGH); //湿度低于45打开加湿器
+    digitalWrite(D4, HIGH); //湿度低于45打开加湿器
     HumidifierStatus = "工作中";
     num--;
   }
   else
   {
     digitalWrite(LED_BUILTIN, HIGH); //低电平为打开板载LED
-    digitalWrite(D3, LOW); //湿度低于45打开加湿器
+    digitalWrite(D4, LOW); //湿度低于45打开加湿器
     HumidifierStatus = "暂停中";
   }
+
+
+    if(num1 != 0)
+  {
+    //digitalWrite(LED_BUILTIN, LOW); //低电平为打开板载LED
+    digitalWrite(D3, HIGH); //湿度低于45打开空调
+    AirconStatus = "工作中";
+    num1--;
+  }
+  else
+  {
+    //digitalWrite(LED_BUILTIN, HIGH); //低电平为打开板载LED
+    digitalWrite(D3, LOW); //湿度低于45打开空调
+    AirconStatus = "暂停中";
+  }
+
 
   if (isnan(Humidity) || isnan(Temperature) || isnan(Temp_Fahrenheit)) { //检查传感器是否连接&正常工作
     Serial.println(F("Failed to read from DHT sensor!")); //出错则向串口打印错误信息
@@ -117,6 +142,10 @@ void loop()
   display.setTextSize(1); //设置字体大小，下同
   display.setCursor(0,0); //设置显示位置，数值为左上角X,Y坐标
   display.print("Temperature: ");
+
+  display.setTextSize(1);
+  display.setCursor(100, 0);
+  display.print(num1);
 
   display.setTextSize(2);
   display.setCursor(0,10);
