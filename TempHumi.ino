@@ -181,8 +181,9 @@ void getAndSendTemperatureAndHumidityData()
   //JSON
   String payload = "{";  //发送格式开始为{
   payload += "\"Humidity\":";payload += Humidity; payload += ","; //将湿度数据放入payload中
-  payload += "\"HumidifierStatus\":";payload += HumidifierStatus; payload += ","; //将湿度数据放入payload中
-  payload += "\"Temperature\":";payload += Temperature; //将温度数据放入payload中
+  payload += "\"HumidifierStatus\":";payload += HumidifierStatus; payload += ","; //将加湿器状态放入payload中
+  payload += "\"Temperature\":";payload += Temperature; payload += ","; //将温度数据放入payload中
+  payload += "\"AirconStatus\":";payload += AirconStatus;  //将空调状态放入payload中
   payload += "}"; //发送格式末尾为}
   char attributes[1000];
   payload.toCharArray( attributes, 1000 ); //将payload中的信息放入sttributes
